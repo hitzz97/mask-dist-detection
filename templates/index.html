@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Video Streaming Demonstration</title>
+  </head>
+  <body>
+    <h1>Video Streaming Demonstration</h1>
+    <div id="container">
+    	
+    </div>
+    <button onclick="play_stop()">Start_Stop</button>
+
+  </body>
+  <script type="text/javascript">
+  	stop=true
+  	function play_stop(){
+
+  		var xhttp = new XMLHttpRequest();
+
+    	xhttp.open("GET","/play_stop",true)
+    	xhttp.send()
+
+    	if (stop==true){
+    		stop=false
+    		// document.getElementById('image').src="/video_feed"
+    		var x = document.createElement("IMG");
+    		x.id="image"
+    		x.src="/video_feed"
+    		x.height="640px"
+    		x.width="480px"
+    		document.getElementById("container").appendChild(x)
+    	}
+    	else{
+    		stop=true
+    		document.getElementById('image').remove()
+    	}
+  	}
+  </script>
+</html>
