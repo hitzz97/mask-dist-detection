@@ -1,38 +1,178 @@
 <html>
   <head>
-    <title>Video Streaming Demonstration</title>
+    <title>mask distance</title>
+    <style type="text/css">
+      .header{
+        background-color: black;
+        color: white;
+        width: 100%;
+        padding: 1%;
+        margin: 0%;
+      }
+      #but{
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        /*padding: 20px;*/
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        padding: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+        border-radius: 12px;
+      }
+      #but:hover{
+        color: green;
+        background-color: white;
+        border: 3px solid green;
+      }
+      #container{
+        background-color: black;
+        height: 240px;
+        width: 320px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 3%
+      }
+      #b{
+        height: 40px;
+        width: 60px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1%;
+      }
+      .cont2{
+        float: left;
+        width: 70%;
+      }
+      .right{
+        padding: 1%;  
+        margin-top: 1.5%;
+        margin-right: 1%;
+        float: right;
+        background-color: #bec2bf;
+        height: 640px;
+        width: 240px;
+        margin-bottom:1%;
+      }
+      li{
+        font-size: 18px;
+      }
+      li:hover{
+        color: yellow;
+        font-size: 20px;
+        text-shadow: 1px 1px #000;
+      }
+      h3{
+        margin: 0%;
+        padding: 0%;
+        color: white;
+        text-shadow: 1px 1px #000;
+      }
+      a:hover{
+        color: red;
+      }
+    </style>
   </head>
-  <body>
-    <h1>Video Streaming Demonstration</h1>
-    <div id="container">
-    	
-    </div>
-    <button onclick="play_stop()">Start_Stop</button>
 
+
+  <body style="margin: 0%;padding: 0%;">
+    <div class="header">
+      <h1>Mask and Social Distancing Detection</h1>
+    </div>
+
+    <div style="height: 640px;width: 80%;margin-left: auto;margin-right: auto;">
+    <div class="cont2">
+      <div id="container"></div>
+    
+      <div id="b">
+        <button id="but" onclick="play_stop()"><b>Start</b></button>
+      </div>
+
+      <div class="img" style="height: 300px;width: 500px;margin-left: auto;
+        margin-right: auto;">
+        <img src="/static/flow.jpg" height="300" width="500">
+      </div>
+    </div>
+
+    <div class="right">
+      <h3>Models used</h3>
+      <ul>
+        <li>CNN face detector</li>
+        <li>YOLO obj detector</li>
+        <li>Mask classifier</li>
+      </ul>
+      <hr style="background-color: black">
+      
+      <h3>Dataset</h3>
+      <ul style="margin: 0%"><a href="https://www.kaggle.com/andrewmvd/face-mask-detection/note.books?sortBy=dateRun&group=profile&pageSize=20&datasetId=667889"><font size="5px">Kaggle</font></a></ul>
+      <hr style="background-color: black">
+
+      <h3>What's Different?</h3>
+      <ul>
+        <li>Multi Threading</li>
+        <li>standalone app</li>
+      </ul>
+      <hr style="background-color: black">
+
+      <h3>Demo Files</h3>
+      <ul>
+        <li onclick="change_video(0)">Webcam</li>
+        <li onclick="change_video(1)">Video 1</li>
+        <li onclick="change_video(2)">Video 2</li>
+        <li onclick="change_video(3)">Video 3</li>
+      </ul>
+    </div>
+    
+    </div>
   </body>
+
+
   <script type="text/javascript">
   	stop=true
+    times=0
   	function play_stop(){
 
   		var xhttp = new XMLHttpRequest();
 
     	xhttp.open("GET","/play_stop",true)
+      xhttp.onreadystatechange = function(){
+        if(this.readyState==4 && this.status==200){
+          if (stop==true){
+            stop=false
+            // document.getElementById('image').src="/video_feed"
+            var x = document.createElement("IMG");
+            x.id="image"
+            x.src="/video_feed/"+(++times)
+            x.height="240"
+            x.width="320"
+            document.getElementById("container").appendChild(x)
+            document.getElementById("but").innerHTML="<b>Stop</b>"
+          }
+          else{
+            stop=true
+            document.getElementById('image').remove()
+            document.getElementById("but").innerHTML="<b>Start</b>"
+          }
+        }
+      }
     	xhttp.send()
-
-    	if (stop==true){
-    		stop=false
-    		// document.getElementById('image').src="/video_feed"
-    		var x = document.createElement("IMG");
-    		x.id="image"
-    		x.src="/video_feed"
-    		x.height="640px"
-    		x.width="480px"
-    		document.getElementById("container").appendChild(x)
-    	}
-    	else{
-    		stop=true
-    		document.getElementById('image').remove()
-    	}
   	}
+
+    function change_video(n){
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.open("GET","/change_input/"+n,true)
+      xhttp.onreadystatechange = function(){
+        if(this.readyState==4 && this.status==200){
+          alert("Video Input changed!");
+        }
+      }
+      xhttp.send()
+      play_stop()
+    }
   </script>
 </html>

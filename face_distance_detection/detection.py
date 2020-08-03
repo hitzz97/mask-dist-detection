@@ -14,7 +14,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.neighbors import KNeighborsClassifier as KNNC 
 import pickle
 import gc
-import face_recognition
+# import face_recognition
 import PIL.Image as Image
 import io,gc
 
@@ -34,9 +34,15 @@ classes = ["with mask","no mask"]
 t=time.time()
 fps=0
 counter=0
-d=(640,480)
+d=(320,240)
 threaded=0
-threshold_distance=75
+threshold_distance=20
+t1=None
+t2=None
+webcam=None
+FPS=3
+file_list=[(0,75),('t1.mp4',70),("t2.mp4",20),("t3.mp4",45)]
+file="t2.mp4"#t2.mp4,t1.mp4,0
 
 model=models.load_model("85%.h5")
 print("\n[STAT] Model Loaded\n")
@@ -49,28 +55,29 @@ def face_det():
 
         try:
             var_frame=frame[:]
-            faces, confidences = cv.detect_face(var_frame,enable_gpu=False,threshold=0.2)
+            with tf.device('/CPU:0'):
+                faces, confidences = cv.detect_face(var_frame,enable_gpu=False,threshold=0.2)
 
-            ls=[]
-            for box,conf in zip(faces,confidences):
-                crop_face = var_frame[box[1]:box[3], box[0]:box[2]]
+                ls=[]
+                for box,conf in zip(faces,confidences):
+                    crop_face = var_frame[box[1]:box[3], box[0]:box[2]]
 
-                crop_face=cv2.cvtColor(crop_face, cv2.COLOR_BGR2RGB)
-                rs_face=cv2.resize(crop_face,(256,256), interpolation = cv2.INTER_AREA)
-                
-                p=model.predict(rs_face.reshape(1,256,256,3))
-                p = np.argmax(p, axis=1)
-                #p=knn.predict(p)
-                p=classes[int(p[0])]
+                    crop_face=cv2.cvtColor(crop_face, cv2.COLOR_BGR2RGB)
+                    rs_face=cv2.resize(crop_face,(256,256), interpolation = cv2.INTER_AREA)
+                    
+                    p=model.predict(rs_face.reshape(1,256,256,3))
+                    p = np.argmax(p, axis=1)
+                    #p=knn.predict(p)
+                    p=classes[int(p[0])]
 
-                if p=="with mask":
-                    color = (0, 255, 0)
-                else :
-                    color = (0, 0, 255)
+                    if p=="with mask":
+                        color = (0, 255, 0)
+                    else :
+                        color = (0, 0, 255)
 
-                ls.append([box,p,color])
+                    ls.append([box,p,color])
         except:
-
+            print("except")
             ls=[]
 
         faces_list=ls[:]
@@ -105,7 +112,6 @@ def obj_det():
             obj_list=ls1[:]
     return
 
-FPS=10
 def track_FPS():
     global fps,counter,t,FPS
 
@@ -123,18 +129,32 @@ def track_FPS():
     return
 
 def change_stop():
-    global stop
+    global stop,threaded,t1,t2,faces_list,obj_list
     stop=not stop
+    print(stop)
+    if threaded:
+        t1.join()
+        t2.join()
+        threaded=0
+        faces_list = []
+        obj_list = []
+        webcam.release()
+        gc.collect()
 
+def change_input_file(n):
+    global file,file_list,threshold_distance
+    file=file_list[n][0]
+    threshold_distance=file_list[n][1]
 
+def detection(test=False):
+    global frame,t1,t2,faces_list,obj_list,threaded,stop,t1,t2,webcam
 
-def detection():
-    global frame,t1,t2,faces_list,obj_list,threaded,stop
-    print("detection\n\n")
+    print("[STAT] detection STARTED\n\n")
+
     t1=Thread(target=face_det)
     t2=Thread(target=obj_det)
-    webcam = cv2.VideoCapture(0)
-    # webcam = cv2.VideoCapture("t.mp4")
+    # webcam = cv2.VideoCapture(0)
+    webcam = cv2.VideoCapture(file)
 
     #knn = pickle.load(open('knn_clas.pkl', 'rb'))
 
@@ -178,6 +198,8 @@ def detection():
 
             font                   = cv2.FONT_HERSHEY_SIMPLEX
             bottomLeftCornerOfText = (box[0],box[1]-5)
+            if p=="no mask":
+                bottomLeftCornerOfText = (box[0],box[3]+5)
             fontScale              = 1
             fontColor              = (255,255,255)
             lineType               = 2
@@ -207,11 +229,12 @@ def detection():
 
               # Green if Safe, Red if UnSafe
                 if isSafe[p]==-1:
-                    cv2.circle(frame, (x,y), radius=10, color=(0, 255, 255), thickness=-1)
+                    cv2.circle(frame, (x,y), radius=4, color=(0, 255, 255), thickness=-1)
                 else:
-                    cv2.circle(frame, (x,y), radius=10, color=(0, 0, 255), thickness=-1)
-        except:
+                    cv2.circle(frame, (x,y), radius=4, color=(0, 0, 255), thickness=-1)
+        except Exception as e:
             pass
+            # print("Exception in obj_det",e)
               
         
         font                   = cv2.FONT_HERSHEY_SIMPLEX
@@ -223,28 +246,41 @@ def detection():
             fontScale,
             fontColor,
             )
-    #     frame=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        # cv2.imshow("Person detection", frame)
+        
+        if test:
+            cv2.imshow("Person detection", frame)
+            
+            key = cv2.waitKey(1) & 0xff
+            if key == ord('q'):
+                stop=True
+                t1.join()
+                t2.join()
+                webcam.release()
+                cv2.destroyAllWindows()
+                break
+            continue
+
+        frame=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         pil_im = Image.fromarray(frame)
         b = io.BytesIO()
         pil_im.save(b, 'jpeg')
         im_bytes = b.getvalue()
+        # print("yield")
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + im_bytes + b'\r\n') 
 
-        # key = cv2.waitKey(1) & 0xff
-
-        # if key == ord('q'):
-        #     stop=True
-        #     t1.join()
-        #     t2.join()
-        #     break
 
 
     # release resources
-    t1.join()
-    t2.join()
+    print("[STAT] Detection STOPPED\n\n")
+    if threaded:
+        t1.join()
+        t2.join()
+        threaded=0
     webcam.release()
     gc.collect()
-    # cv2.destroyAllWindows()
-# detection()
+
+# print("starting")
+# change_stop()
+# fun = detection(True)
+# next(fun)

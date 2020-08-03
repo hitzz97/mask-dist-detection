@@ -7,14 +7,8 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-def gen(camera):
-    while True:
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-@app.route('/video_feed')
-def video_feed():
+@app.route('/video_feed/<times>')
+def video_feed(times):
     return Response(detection(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 @app.route('/play_stop',methods=["GET"])
@@ -22,6 +16,10 @@ def play_stop():
 	change_stop()
 	return "ok"
 
+@app.route('/change_input/<num>',methods=["GET"])
+def change_input(num):
+	change_input_file(int(num))
+	return "ok"
 
 if __name__ == '__main__':
     app.run(debug=True)
