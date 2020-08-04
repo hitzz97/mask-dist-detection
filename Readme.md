@@ -1,7 +1,6 @@
 # Mask and social distancing Detection
 
-![Demo](relative/path/to/img.jpg?raw=true "Demo")
-
+<img src="https://github.com/hitzz97/mask-dist-detection/blob/master/demo.png" height="300" width="400"/>
 
 ### Task 1 Detecting Masks
 1. Detect faces using cvlib.detect_faces
