@@ -31,8 +31,8 @@
       }
       #container{
         background-color: black;
-        height: 240px;
-        width: 320px;
+        height: 300px;
+        width: 500px;
         margin-left: auto;
         margin-right: auto;
         margin-top: 3%
@@ -101,14 +101,14 @@
     <div class="right">
       <h3>Models used</h3>
       <ul>
-        <li>CNN face detector</li>
+        <li>SSD face detector</li>
         <li>YOLO obj detector</li>
         <li>Mask classifier</li>
       </ul>
       <hr style="background-color: black">
       
       <h3>Dataset</h3>
-      <ul style="margin: 0%"><a href="https://www.kaggle.com/andrewmvd/face-mask-detection/note.books?sortBy=dateRun&group=profile&pageSize=20&datasetId=667889"><font size="5px">Kaggle</font></a></ul>
+      <ul style="margin: 0%"><a href="https://www.kaggle.com/andrewmvd/face-mask-detection/"><font size="5px">Kaggle</font></a></ul>
       <hr style="background-color: black">
 
       <h3>What's Different?</h3>
@@ -147,8 +147,8 @@
             var x = document.createElement("IMG");
             x.id="image"
             x.src="/video_feed/"+(++times)
-            x.height="240"
-            x.width="320"
+            x.height="300"
+            x.width="500"
             document.getElementById("container").appendChild(x)
             document.getElementById("but").innerHTML="<b>Stop</b>"
           }

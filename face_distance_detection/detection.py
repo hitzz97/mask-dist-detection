@@ -34,14 +34,14 @@ classes = ["with mask","no mask"]
 t=time.time()
 fps=0
 counter=0
-d=(320,240)
+d=(640,480)
 threaded=0
 threshold_distance=20
 t1=None
 t2=None
 webcam=None
 FPS=3
-file_list=[(0,75),('t1.mp4',70),("t2.mp4",20),("t3.mp4",45)]
+file_list=[(0,75),('t1.mp4',78),("t2.mp4",40),("t3.mp4",75)]
 file="t2.mp4"#t2.mp4,t1.mp4,0
 
 model=models.load_model("85%.h5")
@@ -64,7 +64,8 @@ def face_det():
 
                     crop_face=cv2.cvtColor(crop_face, cv2.COLOR_BGR2RGB)
                     rs_face=cv2.resize(crop_face,(256,256), interpolation = cv2.INTER_AREA)
-                    
+                    # rs_face=rs_face/255.
+
                     p=model.predict(rs_face.reshape(1,256,256,3))
                     p = np.argmax(p, axis=1)
                     #p=knn.predict(p)
@@ -145,6 +146,10 @@ def change_input_file(n):
     global file,file_list,threshold_distance
     file=file_list[n][0]
     threshold_distance=file_list[n][1]
+
+def change_FPS(n):
+    global FPS
+    FPS=n
 
 def detection(test=False):
     global frame,t1,t2,faces_list,obj_list,threaded,stop,t1,t2,webcam

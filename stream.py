@@ -21,5 +21,10 @@ def change_input(num):
 	change_input_file(int(num))
 	return "ok"
 
+@app.route('/change_FPS/<num>',methods=["GET"])
+def change_fps(num):
+	change_FPS(int(num))
+	return "ok"
+
 if __name__ == '__main__':
     app.run(debug=True)
