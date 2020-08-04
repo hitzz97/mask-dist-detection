@@ -14,9 +14,9 @@ from sklearn.cluster import DBSCAN
 from sklearn.neighbors import KNeighborsClassifier as KNNC 
 import pickle
 import gc
-# import face_recognition
 import PIL.Image as Image
 import io,gc
+# import face_recognition
 
 #IMPORTS
 print ("\n\n[STAT] import completed in %ssec. \n" %(round(time.time()-calc)))
@@ -30,21 +30,22 @@ faces_list             = []
 obj_list               = []
 stop                   = True
 #classes = ["mask_weared_incorrect","with_mask","without_mask"]
-classes = ["with mask","no mask"]
+classes = ["mask","no mask"]
 t=time.time()
 fps=0
 counter=0
 d=(640,480)
 threaded=0
-threshold_distance=20
 t1=None
 t2=None
 webcam=None
-FPS=3
-file_list=[(0,75),('t1.mp4',78),("t2.mp4",40),("t3.mp4",75)]
-file="t2.mp4"#t2.mp4,t1.mp4,0
+FPS=2
+file_list=[(0,120),('t1.mp4',78),("t2.mp4",35),("t3.mp4",75)]
+file=file_list[2][0]
+threshold_distance=file_list[2][1]
 
 model=models.load_model("85%.h5")
+# print(model.summary())
 print("\n[STAT] Model Loaded\n")
 
 
@@ -71,14 +72,14 @@ def face_det():
                     #p=knn.predict(p)
                     p=classes[int(p[0])]
 
-                    if p=="with mask":
+                    if p=="mask":
                         color = (0, 255, 0)
                     else :
                         color = (0, 0, 255)
 
                     ls.append([box,p,color])
         except:
-            print("except")
+            # print("except")
             ls=[]
 
         faces_list=ls[:]
@@ -172,7 +173,7 @@ def detection(test=False):
         width =  int(webcam.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(webcam.get(cv2.CAP_PROP_FRAME_HEIGHT))
         dim = (width, height)
-        print('Original Dimensions : ',dim)
+        print('Original Dimensions :',dim," source :",file)
         
     while webcam.isOpened() and not stop:    
         # read frame from webcam 

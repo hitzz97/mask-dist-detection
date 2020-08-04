@@ -1,16 +1,26 @@
 <html>
   <head>
     <title>mask distance</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
     <style type="text/css">
-      .header{
+      * {
+        font-family: Montserrat, sans-serif;
+        box-sizing: border-box;
+      }
+      .header {
         background-color: black;
         color: white;
         width: 100%;
-        padding: 1%;
+        padding: 10px 40px;
         margin: 0%;
+        margin-bottom: 20px;
+        text-align: center;
       }
-      #but{
-        background-color: #4CAF50;
+      #but {
+        background-color: #4caf50;
         border: none;
         color: white;
         /*padding: 20px;*/
@@ -19,160 +29,240 @@
         display: inline-block;
         font-size: 16px;
         margin: 4px 2px;
-        padding: 10px;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding: 8px 15px;
         border-radius: 12px;
       }
-      #but:hover{
+      #but:hover {
         color: green;
         background-color: white;
-        border: 3px solid green;
+        border: 1px solid green;
+        cursor: pointer;
       }
-      #container{
+      #container {
         background-color: black;
         height: 300px;
         width: 500px;
         margin-left: auto;
         margin-right: auto;
-        margin-top: 3%
+        margin-top: 3%;
       }
-      #b{
+      #b {
         height: 40px;
         width: 60px;
         margin-left: auto;
         margin-right: auto;
         margin-bottom: 1%;
+        margin-top: 2%;
       }
-      .cont2{
+      .cont2 {
         float: left;
         width: 70%;
       }
-      .right{
-        padding: 1%;  
+      .right {
+        padding: 2em;
         margin-top: 1.5%;
         margin-right: 1%;
         float: right;
-        background-color: #bec2bf;
-        height: 640px;
-        width: 240px;
-        margin-bottom:1%;
+        background-color: #e5e5e5;
+        /* height: 640px; */
+        width: 300px;
+        margin-bottom: 1%;
       }
-      li{
+      li {
         font-size: 18px;
       }
-      li:hover{
-        color: yellow;
-        font-size: 20px;
-        text-shadow: 1px 1px #000;
+      li:hover {
+        color: rgb(33, 109, 209);
+        /* font-size: 20px; */
+        /* text-shadow: 1px 1px #000; */
+        cursor: pointer;
       }
-      h3{
-        margin: 0%;
+      h3 {
+        margin: 8px 0px;
+        /* margin: 0%; */
         padding: 0%;
-        color: white;
-        text-shadow: 1px 1px #000;
+        color: #000;
+        /* text-shadow: 1px 1px #000; */
       }
-      a:hover{
+      a {
+        text-decoration: none;
+      }
+      a:hover {
         color: red;
+      }
+      .box::before {
+        top: -1px;
+        display: none;
+        content: "";
+        position: absolute;
+        color: #4caf50;
+        width: 50px;
+        height: 50px;
+        z-index: 1000;
+      }
+
+      li .box {
+        max-width: 500px;
+        position: absolute;
+        font-size: 15px;
+        top: -0.5em;
+        right: 15em;
+        display: none;
+        background-color: #333;
+        padding: 10px 15px;
+        color: rgb(173, 207, 252);
+        transition: ease;
+        transition-duration: 1s;
+      }
+      li:hover .box,
+      li:hover .box::before {
+        display: block;
       }
     </style>
   </head>
 
-
-  <body style="margin: 0%;padding: 0%;">
+  <body style="margin: 0%; padding: 0%;">
     <div class="header">
       <h1>Mask and Social Distancing Detection</h1>
     </div>
 
-    <div style="height: 640px;width: 80%;margin-left: auto;margin-right: auto;">
-    <div class="cont2">
-      <div id="container"></div>
-    
-      <div id="b">
-        <button id="but" onclick="play_stop()"><b>Start</b></button>
+    <div
+      style="height: 640px; width: 80%; margin-left: auto; margin-right: auto;"
+    >
+      <div class="cont2">
+        <div id="container"></div>
+
+        <div id="b">
+          <button id="but" onclick="play_stop()"><b>Start</b></button>
+        </div>
+
+        <div
+          class="img"
+          style="
+            height: 300px;
+            width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+          "
+        >
+          <div style="width:500px;height: 20px;font-size: 20px; text-align: center;margin-top: 4%">
+            Work Flow
+          </div>
+          <img src="/static/flow.jpg" height="350" width="550" />
+        </div>
       </div>
 
-      <div class="img" style="height: 300px;width: 500px;margin-left: auto;
-        margin-right: auto;">
-        <img src="/static/flow.jpg" height="300" width="500">
+      <div class="right">
+        <h3>Models used</h3>
+        <ul>
+          <li style="position: relative;">
+            SSD face detector
+            <div class="box">
+              In Built Detector in CVLIB uses RESNET-50.
+            </div>
+          </li>
+
+          <li style="position: relative;">
+            YOLOv3 obj detector
+            <div class="box">
+              YoloV3-lite for Detecting objects, Here used to detect person
+            </div>
+          </li>
+
+          <li style="position: relative;">
+            Mask classifier
+            <div class="box">
+              Model Architecture inspired from vgg16, Trained on 600 images 
+            </div>
+          </li>
+        </ul>
+
+        <hr style="background-color: black;" />
+
+        <h3>Dataset</h3>
+        <ul style="margin: 0%;">
+          <a href="https://www.kaggle.com/andrewmvd/face-mask-detection/"
+            ><font size="5px">Kaggle</font></a
+          >
+        </ul>
+        <hr style="background-color: black;" />
+
+        <h3>What's Different?</h3>
+        <ul>
+          <li style="position: relative;">
+            Multi Threaded
+            <div class="box">
+              Mask detection and social distancing detection run in two different threads.
+            </div>
+          </li>
+          <li style="position: relative;">
+            Standalone 
+            <div class="box">
+              This Solution doesn't requires Internet connection to run.
+            </div>
+          </li>
+          <li style="position: relative;">
+            Multi Camera  Support
+            <div class="box">
+              This Solution can be extended to run on different inputs at the same time.
+            </div>
+          </li>
+        </ul>
+        <hr style="background-color: black;" />
+
+        <h3>Input Files</h3>
+        <ul>
+          <li onclick="change_video(0)">Webcam</li>
+          <li onclick="change_video(1)">Video 1</li>
+          <li onclick="change_video(2)">Video 2</li>
+          <li onclick="change_video(3)">Video 3</li>
+        </ul>
+        <hr style="background-color: black;" />
+
       </div>
-    </div>
-
-    <div class="right">
-      <h3>Models used</h3>
-      <ul>
-        <li>SSD face detector</li>
-        <li>YOLO obj detector</li>
-        <li>Mask classifier</li>
-      </ul>
-      <hr style="background-color: black">
-      
-      <h3>Dataset</h3>
-      <ul style="margin: 0%"><a href="https://www.kaggle.com/andrewmvd/face-mask-detection/"><font size="5px">Kaggle</font></a></ul>
-      <hr style="background-color: black">
-
-      <h3>What's Different?</h3>
-      <ul>
-        <li>Multi Threading</li>
-        <li>standalone app</li>
-      </ul>
-      <hr style="background-color: black">
-
-      <h3>Demo Files</h3>
-      <ul>
-        <li onclick="change_video(0)">Webcam</li>
-        <li onclick="change_video(1)">Video 1</li>
-        <li onclick="change_video(2)">Video 2</li>
-        <li onclick="change_video(3)">Video 3</li>
-      </ul>
-    </div>
-    
     </div>
   </body>
 
-
   <script type="text/javascript">
-  	stop=true
-    times=0
-  	function play_stop(){
-
-  		var xhttp = new XMLHttpRequest();
-
-    	xhttp.open("GET","/play_stop",true)
-      xhttp.onreadystatechange = function(){
-        if(this.readyState==4 && this.status==200){
-          if (stop==true){
-            stop=false
-            // document.getElementById('image').src="/video_feed"
-            var x = document.createElement("IMG");
-            x.id="image"
-            x.src="/video_feed/"+(++times)
-            x.height="300"
-            x.width="500"
-            document.getElementById("container").appendChild(x)
-            document.getElementById("but").innerHTML="<b>Stop</b>"
-          }
-          else{
-            stop=true
-            document.getElementById('image').remove()
-            document.getElementById("but").innerHTML="<b>Start</b>"
-          }
-        }
-      }
-    	xhttp.send()
-  	}
-
-    function change_video(n){
+    stop = true;
+    times = 0;
+    function play_stop() {
       var xhttp = new XMLHttpRequest();
 
-      xhttp.open("GET","/change_input/"+n,true)
-      xhttp.onreadystatechange = function(){
-        if(this.readyState==4 && this.status==200){
+      xhttp.open("GET", "/play_stop", true);
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          if (stop == true) {
+            stop = false;
+            // document.getElementById('image').src="/video_feed"
+            var x = document.createElement("IMG");
+            x.id = "image";
+            x.src = "/video_feed/" + ++times;
+            x.height = "300";
+            x.width = "500";
+            document.getElementById("container").appendChild(x);
+            document.getElementById("but").innerHTML = "<b>Stop</b>";
+          } else {
+            stop = true;
+            document.getElementById("image").remove();
+            document.getElementById("but").innerHTML = "<b>Start</b>";
+          }
+        }
+      };
+      xhttp.send();
+    }
+
+    function change_video(n) {
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.open("GET", "/change_input/" + n, true);
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
           alert("Video Input changed!");
         }
-      }
-      xhttp.send()
-      play_stop()
+      };
+      xhttp.send();
+      play_stop();
     }
   </script>
 </html>
