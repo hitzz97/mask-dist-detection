@@ -26,5 +26,10 @@ def change_fps(num):
 	change_FPS(int(num))
 	return "ok"
 
+@app.route('/info')
+def info():
+	# person_cnt,no_mask,dist_vio
+	return "#".join([str(i) for i in get_info()]) 
+
 if __name__ == '__main__':
     app.run(debug=True)

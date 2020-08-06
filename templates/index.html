@@ -56,17 +56,28 @@
       }
       .cont2 {
         float: left;
-        width: 70%;
+        width: 50%;
       }
       .right {
         padding: 2em;
         margin-top: 1.5%;
-        margin-right: 1%;
+        margin-right: 3%;
         float: right;
         background-color: #e5e5e5;
         /* height: 640px; */
         width: 300px;
         margin-bottom: 1%;
+      }
+      .stat{
+        padding: 2em;
+        margin-top: 1.5%;
+        float: left;
+        position: relative;
+        background-color: #e5e5e5;
+        /* height: 640px; */
+        width: 300px;
+        margin-left: 2%;
+        /* margin-right: auto; */
       }
       li {
         font-size: 18px;
@@ -106,7 +117,7 @@
         position: absolute;
         font-size: 15px;
         top: -0.5em;
-        right: 15em;
+        left: 15em;
         display: none;
         background-color: #333;
         padding: 10px 15px;
@@ -126,11 +137,43 @@
       <h1>Mask and Social Distancing Detection</h1>
     </div>
 
+    <div class="stat">
+      <h3>Frame Statistics</h3>
+        <ul>
+          <li style="position: relative;">
+            Persons Count: <strong><span id="person" style="color: green;"></span></strong><br>
+            <div class="box">
+              Total numbers of person detected in the frame
+            </div>
+          </li>
+          <li style="position: relative;">
+            With Mask : <strong><span id="mask" style="color: green;"></span></strong><br>
+            <div class="box">
+              Total numbers of person not wearing mask in the frame
+            </div>
+          </li>
+          <li style="position: relative;">
+            Without Mask : <strong><span id="no_mask" style="color: red;"></span></strong><br>
+            <div class="box">
+              Total numbers of person not wearing mask in the frame
+            </div>
+          </li>
+          <li style="position: relative;">
+            Distance Vio : <strong><span id="dist" style="color: red;"></span></strong><br>
+            <div class="box">
+              Total numbers of persons violating social distancing in the frame
+            </div>
+          </li>
+        </ul> 
+    </div>
+    
     <div
-      style="height: 640px; width: 80%; margin-left: auto; margin-right: auto;"
+      style="height: 640px; width: 90%; margin-left: auto; margin-right: auto ;"
     >
       <div class="cont2">
-        <div id="container"></div>
+
+        <div id="container">
+        </div>
 
         <div id="b">
           <button id="but" onclick="play_stop()"><b>Start</b></button>
@@ -226,6 +269,8 @@
   <script type="text/javascript">
     stop = true;
     times = 0;
+    timer = null
+
     function play_stop() {
       var xhttp = new XMLHttpRequest();
 
@@ -242,10 +287,12 @@
             x.width = "500";
             document.getElementById("container").appendChild(x);
             document.getElementById("but").innerHTML = "<b>Stop</b>";
+            timer = createTimer()
           } else {
             stop = true;
             document.getElementById("image").remove();
             document.getElementById("but").innerHTML = "<b>Start</b>";
+            clearInterval(timer)
           }
         }
       };
@@ -264,5 +311,24 @@
       xhttp.send();
       play_stop();
     }
+
+    function createTimer(){
+      return setInterval(function (){
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.open("GET", "/info", true);
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            nos=this.responseText.split("#")
+            document.getElementById("mask").innerHTML=nos[2]
+            document.getElementById("dist").innerHTML=nos[3]
+            document.getElementById("no_mask").innerHTML=nos[1]
+            document.getElementById("person").innerHTML=nos[0]
+          }
+        };
+        xhttp.send();
+      }, 1000)
+    }
+
   </script>
 </html>

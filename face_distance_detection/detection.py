@@ -34,15 +34,20 @@ classes = ["mask","no mask"]
 t=time.time()
 fps=0
 counter=0
+face_crop=256#192#
 d=(640,480)
 threaded=0
 t1=None
 t2=None
 webcam=None
-FPS=2
+FPS=1.75
 file_list=[(0,120),('t1.mp4',78),("t2.mp4",35),("t3.mp4",75)]
 file=file_list[2][0]
 threshold_distance=file_list[2][1]
+
+person_count=0
+no_mask_count=0
+dist_vio=0
 
 model=models.load_model("85%.h5")
 # print(model.summary())
@@ -51,7 +56,7 @@ print("\n[STAT] Model Loaded\n")
 
 #FACE DETECTION THREAD
 def face_det():
-    global faces_list
+    global faces_list,face_crop
     while not stop:
 
         try:
@@ -64,10 +69,10 @@ def face_det():
                     crop_face = var_frame[box[1]:box[3], box[0]:box[2]]
 
                     crop_face=cv2.cvtColor(crop_face, cv2.COLOR_BGR2RGB)
-                    rs_face=cv2.resize(crop_face,(256,256), interpolation = cv2.INTER_AREA)
+                    rs_face=cv2.resize(crop_face,(face_crop,face_crop), interpolation = cv2.INTER_AREA)
                     # rs_face=rs_face/255.
 
-                    p=model.predict(rs_face.reshape(1,256,256,3))
+                    p=model.predict(rs_face.reshape(1,face_crop,face_crop,3))
                     p = np.argmax(p, axis=1)
                     #p=knn.predict(p)
                     p=classes[int(p[0])]
@@ -131,7 +136,7 @@ def track_FPS():
     return
 
 def change_stop():
-    global stop,threaded,t1,t2,faces_list,obj_list
+    global stop,threaded,t1,t2,faces_list,obj_list,person_count,no_mask_count,dist_vio
     stop=not stop
     print(stop)
     if threaded:
@@ -140,8 +145,15 @@ def change_stop():
         threaded=0
         faces_list = []
         obj_list = []
+        person_count=0
+        no_mask_count=0
+        dist_vio=0
         webcam.release()
         gc.collect()
+
+def get_info():
+    global person_count,no_mask_count,dist_vio,faces_list
+    return [person_count,no_mask_count,len(faces_list)-no_mask_count,dist_vio]
 
 def change_input_file(n):
     global file,file_list,threshold_distance
@@ -153,7 +165,7 @@ def change_FPS(n):
     FPS=n
 
 def detection(test=False):
-    global frame,t1,t2,faces_list,obj_list,threaded,stop,t1,t2,webcam
+    global frame,t1,t2,faces_list,obj_list,threaded,stop,t1,t2,webcam,person_count,no_mask_count,dist_vio
 
     print("[STAT] detection STARTED\n\n")
 
@@ -190,7 +202,8 @@ def detection(test=False):
             
         track_FPS()
         
-    #     print(faces_list)
+        #     print(faces_list)
+        temp=0
         for item in faces_list:
             box=item[0]
             p=item[1]
@@ -205,6 +218,7 @@ def detection(test=False):
             font                   = cv2.FONT_HERSHEY_SIMPLEX
             bottomLeftCornerOfText = (box[0],box[1]-5)
             if p=="no mask":
+                temp+=1
                 bottomLeftCornerOfText = (box[0],box[3]+5)
             fontScale              = 1
             fontColor              = (255,255,255)
@@ -216,8 +230,13 @@ def detection(test=False):
                 fontScale,
                 fontColor,
                 lineType)
-    #     print(obj_list)
 
+        no_mask_count=temp
+        #     print(obj_list)
+
+        person_count=len(obj_list)
+
+        temp=0
         try:
             clustering = DBSCAN(eps=threshold_distance,min_samples=2).fit(obj_list)
             isSafe = clustering.labels_
@@ -233,11 +252,16 @@ def detection(test=False):
 
                 x,y = obj_list[p]
 
-              # Green if Safe, Red if UnSafe
+              # YELLOW if Safe, Red if UnSafe
                 if isSafe[p]==-1:
                     cv2.circle(frame, (x,y), radius=4, color=(0, 255, 255), thickness=-1)
                 else:
+                    temp+=1
                     cv2.circle(frame, (x,y), radius=4, color=(0, 0, 255), thickness=-1)
+
+            dist_vio=temp
+            temp=0
+
         except Exception as e:
             pass
             # print("Exception in obj_det",e)
