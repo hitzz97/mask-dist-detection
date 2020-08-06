@@ -16,7 +16,12 @@ import pickle
 import gc
 import PIL.Image as Image
 import io,gc
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 # import face_recognition
+
+face_file=open("face.dat","a")
+person_file=open("person.dat","a")
 
 #IMPORTS
 print ("\n\n[STAT] import completed in %ssec. \n" %(round(time.time()-calc)))
@@ -34,14 +39,14 @@ classes = ["mask","no mask"]
 t=time.time()
 fps=0
 counter=0
-face_crop=256#192#
+face_crop=256#192#96#
 d=(640,480)
 threaded=0
 t1=None
 t2=None
 webcam=None
-FPS=1.75
-file_list=[(0,120),('t1.mp4',78),("t2.mp4",35),("t3.mp4",75)]
+FPS=1.9
+file_list=[(0,120),('t1.mp4',78),("t2.mp4",35),("t3.mp4",75),("t4.mp4",75)]
 file=file_list[2][0]
 threshold_distance=file_list[2][1]
 
@@ -136,7 +141,7 @@ def track_FPS():
     return
 
 def change_stop():
-    global stop,threaded,t1,t2,faces_list,obj_list,person_count,no_mask_count,dist_vio
+    global stop,threaded,t1,t2,faces_list,obj_list,person_count,no_mask_count,dist_vio,face_file,person_file
     stop=not stop
     print(stop)
     if threaded:
@@ -148,11 +153,21 @@ def change_stop():
         person_count=0
         no_mask_count=0
         dist_vio=0
+        face_file.flush()
+        os.fsync(face_file.fileno())
+        person_file.flush()
+        os.fsync(person_file.fileno())
         webcam.release()
         gc.collect()
 
 def get_info():
-    global person_count,no_mask_count,dist_vio,faces_list
+    global person_count,no_mask_count,dist_vio,faces_list,face_file,person_file
+    
+    if len(faces_list):
+        face_file.write(f"{len(faces_list)-no_mask_count} {no_mask_count}\n")
+    if person_count:
+        person_file.write(f"{person_count} {dist_vio}\n")
+
     return [person_count,no_mask_count,len(faces_list)-no_mask_count,dist_vio]
 
 def change_input_file(n):

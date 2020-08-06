@@ -165,6 +165,10 @@
             </div>
           </li>
         </ul> 
+
+        <hr style="background-color: black;" />
+
+        <a href="/analytics"><h3 style="color: blue">Analytics</h3></a>
     </div>
     
     <div
@@ -259,6 +263,7 @@
           <li onclick="change_video(1)">Video 1</li>
           <li onclick="change_video(2)">Video 2</li>
           <li onclick="change_video(3)">Video 3</li>
+          <!-- <li onclick="change_video(4)">Video 4</li> -->
         </ul>
         <hr style="background-color: black;" />
 
@@ -290,6 +295,10 @@
             timer = createTimer()
           } else {
             stop = true;
+            document.getElementById("mask").innerHTML=0
+            document.getElementById("dist").innerHTML=0
+            document.getElementById("no_mask").innerHTML=0
+            document.getElementById("person").innerHTML=0
             document.getElementById("image").remove();
             document.getElementById("but").innerHTML = "<b>Start</b>";
             clearInterval(timer)

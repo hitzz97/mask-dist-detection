@@ -1,0 +1,48 @@
+	<style type="text/css">
+		.left{
+			float: left;
+			position: relative;
+			width: 50%;
+			padding-top: 8%;
+		}
+		.img{
+			float: right;
+			position: relative;
+			width: 50%;
+		}
+		.cont{
+			position: relative;
+			height: 240px;
+			width: 60%;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 2%;
+		}
+	</style>
+
+
+	<div class="cont">
+		<div class="left">
+			<h2>Mask</h2>
+			Mask Detected    : {{ mask }}%<br>
+			Mask not Detected: {{ no_mask }}%<br>
+		</div>
+
+		<img class="img" src="/static/{{ mask_img }}" height="300" width="300">
+	</div>
+
+	<div class="cont">
+		<div class="left">
+			<h2>Social Distancing</h2>
+			followers    : {{ followers }}%<br>
+			violators: {{ violators }}%<br>
+		</div>
+
+		<img class="img" src="/static/{{ ana_img }}" height="300" width="300">
+	</div>
+
+	<div class="cont">
+		<h2>Over Time</h2>
+		
+		<img class="centre" src="/static/{{ overTime }}" height="400" width="600">
+	</div>
