@@ -43,9 +43,11 @@ def analytics():
 				mask+=int(dat[0])
 				no_mask+=int(dat[1])
 	try:
-		mask=round((mask/(mask+no_mask))*100)
-		no_mask=round((no_mask/(mask+no_mask))*100)
+		
+		mask=float(str((mask/(mask+no_mask))*100)[:4])
+		no_mask=float(str((no_mask/(mask+no_mask))*100)[:4])
 
+		print(mask,no_mask)
 		labels = 'Mask Detected', 'No Mask Detected'
 		sizes = [mask, no_mask]
 		explode = (0, 0.1)  
@@ -75,8 +77,9 @@ def analytics():
 
 	followers = total_person-violators
 	try:
-		followers=round((followers/(followers+violators))*100)
-		violators=round((violators/(followers+violators))*100)
+		followers=float(str((followers/(total_person))*100)[:4])
+		violators=float(str((violators/(total_person))*100)[:4])
+		print(followers,violators)
 
 		labels = 'followers', 'violators'
 		sizes = [followers, violators]
@@ -94,6 +97,8 @@ def analytics():
 		plt.plot(x,follow,label="followers",linewidth=3)
 		plt.plot(x,violate,label="violaters",linewidth=3)
 		plt.legend(['follower',"violaters"])
+		plt.xlabel("Time")
+		plt.ylabel("Count")
 		plt.savefig("static/overTime.jpg")
 		overTime="overTime.jpg"
 	except Exception as e:

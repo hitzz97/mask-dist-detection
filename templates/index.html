@@ -61,22 +61,22 @@
       .right {
         padding: 2em;
         margin-top: 1.5%;
-        margin-right: 3%;
+        /* margin-right: 2%; */
         float: right;
         background-color: #e5e5e5;
         /* height: 640px; */
         width: 300px;
         margin-bottom: 1%;
       }
-      .stat{
+      .stat {
         padding: 2em;
         margin-top: 1.5%;
         float: left;
         position: relative;
         background-color: #e5e5e5;
         /* height: 640px; */
-        width: 300px;
-        margin-left: 2%;
+        width: 290px;
+        margin-left: 3%;
         /* margin-right: auto; */
       }
       li {
@@ -102,32 +102,52 @@
         color: red;
       }
       .box::before {
-        top: -1px;
-        display: none;
         content: "";
         position: absolute;
-        color: #4caf50;
-        width: 50px;
-        height: 50px;
+        top: 0.3em;
+        left: -0.6em;
+        /* display: none; */
+        transform: translateX(-50%);
+        border: 15px solid;
+        border-color: transparent #333 transparent transparent;
         z-index: 1000;
       }
 
       li .box {
+        width: 120px;
         max-width: 500px;
         position: absolute;
         font-size: 15px;
         top: -0.5em;
-        left: 15em;
+        left: 12em;
         display: none;
         background-color: #333;
         padding: 10px 15px;
         color: rgb(173, 207, 252);
         transition: ease;
         transition-duration: 1s;
+        z-index: 1000;
       }
       li:hover .box,
       li:hover .box::before {
         display: block;
+      }
+
+      .flow {
+        /* text-align: center; */
+      }
+      .flow h2 {
+        /* border: 1px solid #333; */
+        font-size: 20px;
+        font-weight: bold;
+        text-decoration: underline;
+        /* color: rgb(33, 109, 209); */
+        /* font-style: italic; */
+      }
+
+      .flow img {
+        width: 800px;
+        height: 400px;
       }
     </style>
   </head>
@@ -139,45 +159,49 @@
 
     <div class="stat">
       <h3>Frame Statistics</h3>
-        <ul>
-          <li style="position: relative;">
-            Persons Count: <strong><span id="person" style="color: green;"></span></strong><br>
-            <div class="box">
-              Total numbers of person detected in the frame
-            </div>
-          </li>
-          <li style="position: relative;">
-            With Mask : <strong><span id="mask" style="color: green;"></span></strong><br>
-            <div class="box">
-              Total numbers of person not wearing mask in the frame
-            </div>
-          </li>
-          <li style="position: relative;">
-            Without Mask : <strong><span id="no_mask" style="color: red;"></span></strong><br>
-            <div class="box">
-              Total numbers of person not wearing mask in the frame
-            </div>
-          </li>
-          <li style="position: relative;">
-            Distance Vio : <strong><span id="dist" style="color: red;"></span></strong><br>
-            <div class="box">
-              Total numbers of persons violating social distancing in the frame
-            </div>
-          </li>
-        </ul> 
+      <ul>
+        <li style="position: relative;">
+          Persons Count:
+          <strong><span id="person" style="color: green;">0</span></strong><br />
+          <div class="box">
+            Total numbers of person detected in the frame
+          </div>
+        </li>
+        <li style="position: relative;">
+          With Mask :
+          <strong><span id="mask" style="color: green;">0</span></strong><br />
+          <div class="box">
+            Total numbers of person not wearing mask in the frame
+          </div>
+        </li>
+        <li style="position: relative;">
+          Without Mask :
+          <strong><span id="no_mask" style="color: red;">0</span></strong><br />
+          <div class="box">
+            Total numbers of person not wearing mask in the frame
+          </div>
+        </li>
+        <li style="position: relative;">
+          Distance Vio :
+          <strong><span id="dist" style="color: red;">0</span></strong><br />
+          <div class="box">
+            Total numbers of persons violating social distancing in the frame
+          </div>
+        </li>
+      </ul>
 
-        <hr style="background-color: black;" />
+      <hr style="background-color: black;" />
 
-        <a href="/analytics"><h3 style="color: blue">Analytics</h3></a>
+      <a href="/analytics"
+        ><h3 style="color: rgb(33, 109, 209);">Go to Analytics</h3></a
+      >
     </div>
-    
+
     <div
-      style="height: 640px; width: 90%; margin-left: auto; margin-right: auto ;"
+      style="height: 640px; width: 90%; margin-left: auto; margin-right: auto;"
     >
       <div class="cont2">
-
-        <div id="container">
-        </div>
+        <div id="container"></div>
 
         <div id="b">
           <button id="but" onclick="play_stop()"><b>Start</b></button>
@@ -186,16 +210,22 @@
         <div
           class="img"
           style="
-            height: 300px;
+            /* height: 300px; */
             width: 500px;
             margin-left: auto;
             margin-right: auto;
           "
         >
-          <div style="width:500px;height: 20px;font-size: 20px; text-align: center;margin-top: 4%">
-            Work Flow
-          </div>
-          <img src="/static/flow.jpg" height="350" width="550" />
+          <div
+            style="
+              width: 500px;
+              height: 20px;
+              font-size: 20px;
+              text-align: center;
+              margin-top: 4%;
+            "
+          ></div>
+          <!-- <img src="/static/flow.jpg" height="350" width="550" /> -->
         </div>
       </div>
 
@@ -219,7 +249,7 @@
           <li style="position: relative;">
             Mask classifier
             <div class="box">
-              Model Architecture inspired from vgg16, Trained on 600 images 
+              Model Architecture inspired from vgg16, Trained on 600 images
             </div>
           </li>
         </ul>
@@ -229,7 +259,7 @@
         <h3>Dataset</h3>
         <ul style="margin: 0%;">
           <a href="https://www.kaggle.com/andrewmvd/face-mask-detection/"
-            ><font size="5px">Kaggle</font></a
+            ><font size="4px">Kaggle</font></a
           >
         </ul>
         <hr style="background-color: black;" />
@@ -239,19 +269,27 @@
           <li style="position: relative;">
             Multi Threaded
             <div class="box">
-              Mask detection and social distancing detection run in two different threads.
+              Mask detection and social distancing detection run in two
+              different threads.
             </div>
           </li>
           <li style="position: relative;">
-            Standalone 
+            Standalone
             <div class="box">
               This Solution doesn't requires Internet connection to run.
             </div>
           </li>
           <li style="position: relative;">
-            Multi Camera  Support
+            Multi Camera Support
             <div class="box">
-              This Solution can be extended to run on different inputs at the same time.
+              This Solution can be extended to run on different inputs at the
+              same time.
+            </div>
+          </li>
+          <li style="position: relative;">
+            Session Report
+            <div class="box">
+              Both real time and post session analysis detections are present
             </div>
           </li>
         </ul>
@@ -266,7 +304,10 @@
           <!-- <li onclick="change_video(4)">Video 4</li> -->
         </ul>
         <hr style="background-color: black;" />
-
+      </div>
+      <div class="flow">
+        <!-- <h2>The entire workflow:</h2> -->
+        <img src="/static/flow.jpg" />
       </div>
     </div>
   </body>
@@ -274,7 +315,7 @@
   <script type="text/javascript">
     stop = true;
     times = 0;
-    timer = null
+    timer = null;
 
     function play_stop() {
       var xhttp = new XMLHttpRequest();
@@ -292,16 +333,16 @@
             x.width = "500";
             document.getElementById("container").appendChild(x);
             document.getElementById("but").innerHTML = "<b>Stop</b>";
-            timer = createTimer()
+            timer = createTimer();
           } else {
             stop = true;
-            document.getElementById("mask").innerHTML=0
-            document.getElementById("dist").innerHTML=0
-            document.getElementById("no_mask").innerHTML=0
-            document.getElementById("person").innerHTML=0
+            document.getElementById("mask").innerHTML = 0;
+            document.getElementById("dist").innerHTML = 0;
+            document.getElementById("no_mask").innerHTML = 0;
+            document.getElementById("person").innerHTML = 0;
             document.getElementById("image").remove();
             document.getElementById("but").innerHTML = "<b>Start</b>";
-            clearInterval(timer)
+            clearInterval(timer);
           }
         }
       };
@@ -321,23 +362,22 @@
       play_stop();
     }
 
-    function createTimer(){
-      return setInterval(function (){
+    function createTimer() {
+      return setInterval(function () {
         var xhttp = new XMLHttpRequest();
 
         xhttp.open("GET", "/info", true);
         xhttp.onreadystatechange = function () {
           if (this.readyState == 4 && this.status == 200) {
-            nos=this.responseText.split("#")
-            document.getElementById("mask").innerHTML=nos[2]
-            document.getElementById("dist").innerHTML=nos[3]
-            document.getElementById("no_mask").innerHTML=nos[1]
-            document.getElementById("person").innerHTML=nos[0]
+            nos = this.responseText.split("#");
+            document.getElementById("mask").innerHTML = nos[2];
+            document.getElementById("dist").innerHTML = nos[3];
+            document.getElementById("no_mask").innerHTML = nos[1];
+            document.getElementById("person").innerHTML = nos[0];
           }
         };
         xhttp.send();
-      }, 1000)
+      }, 1000);
     }
-
   </script>
 </html>

@@ -1,48 +1,104 @@
-	<style type="text/css">
-		.left{
-			float: left;
-			position: relative;
-			width: 50%;
-			padding-top: 8%;
-		}
-		.img{
-			float: right;
-			position: relative;
-			width: 50%;
-		}
-		.cont{
-			position: relative;
-			height: 240px;
-			width: 60%;
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 2%;
-		}
-	</style>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Session Analysis</title>
+  </head>
+  <body>
+    <style type="text/css">
+      * {
+        font-family: Montserrat, sans-serif;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .header {
+        background-color: black;
+        color: white;
+        width: 100%;
+        padding: 10px 40px;
+        margin: 0%;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .left {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        float: left;
+        height: 300px;
+        /* position: relative; */
+        width: 50%;
+      }
+      .img {
+        float: right;
+        position: relative;
+        width: 50%;
+      }
+      .cont {
+        position: relative;
+        height: 350px;
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+        padding: 20px;
+      }
 
+      .title {
+        text-align: center;
+        font-size: 1.2em;
+        margin: 1.2em;
+      }
+      .title h3 {
+        color: rgb(33, 109, 209);
+      }
 
-	<div class="cont">
-		<div class="left">
-			<h2>Mask</h2>
-			Mask Detected    : {{ mask }}%<br>
-			Mask not Detected: {{ no_mask }}%<br>
-		</div>
+      .overTime {
+        text-align: center;
+      }
+    </style>
+    <div class="header">
+      <h1>Mask and Social Distancing Detection</h1>
+    </div>
+    <div class="title">
+      <h3>Post Session analysis</h3>
+    </div>
 
-		<img class="img" src="/static/{{ mask_img }}" height="300" width="300">
-	</div>
+    <div class="cont grid-left">
+      <div class="left">
+        <h2>Mask</h2>
+        Mask Detected : {{ mask }}%<br />
+        Mask not Detected: {{ no_mask }}%<br />
+      </div>
 
-	<div class="cont">
-		<div class="left">
-			<h2>Social Distancing</h2>
-			followers    : {{ followers }}%<br>
-			violators: {{ violators }}%<br>
-		</div>
+      <img class="img" src="/static/{{ mask_img }}" height="300" width="300" />
+    </div>
 
-		<img class="img" src="/static/{{ ana_img }}" height="300" width="300">
-	</div>
+    <div class="cont grid-right">
+      <div class="left">
+        <h2>Social Distancing</h2>
+        followers : {{ followers }}%<br />
+        violators: {{ violators }}%<br />
+      </div>
 
-	<div class="cont">
-		<h2>Over Time</h2>
-		
-		<img class="centre" src="/static/{{ overTime }}" height="400" width="600">
-	</div>
+      <img class="img" src="/static/{{ ana_img }}" height="300" width="300" />
+    </div>
+
+    <div class="cont overTime">
+      <h2>Over Time</h2>
+      <br />
+      <img
+        class="centre"
+        src="/static/{{ overTime }}"
+        height="400"
+        width="600"
+      />
+    </div>
+  </body>
+</html>
