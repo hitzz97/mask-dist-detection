@@ -20,8 +20,8 @@ import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 # import face_recognition
 
-face_file=open("face.dat","a")
-person_file=open("person.dat","a")
+face_file=open("logs/face.dat","a")
+person_file=open("logs/person.dat","a")
 
 #IMPORTS
 print ("\n\n[STAT] import completed in %ssec. \n" %(round(time.time()-calc)))
@@ -35,11 +35,11 @@ faces_list             = []
 obj_list               = []
 stop                   = True
 #classes = ["mask_weared_incorrect","with_mask","without_mask"]
-classes = ["mask","no mask"]
+classes = ["mask","alert"]
 t=time.time()
 fps=0
 counter=0
-face_crop=256#192#96#
+face_crop=224#256#192#96#
 d=(640,480)
 threaded=0
 t1=None
@@ -54,30 +54,30 @@ person_count=0
 no_mask_count=0
 dist_vio=0
 
-model=models.load_model("85%.h5")
+model=models.load_model("models/try4.h5")
 # print(model.summary())
 print("\n[STAT] Model Loaded\n")
 
 
 #FACE DETECTION THREAD
 def face_det():
-    global faces_list,face_crop
+    global faces_list,face_crop,frame
     while not stop:
 
         try:
             var_frame=frame[:]
             with tf.device('/CPU:0'):
-                faces, confidences = cv.detect_face(var_frame,enable_gpu=False,threshold=0.2)
+                faces, confidences = cv.detect_face(var_frame,enable_gpu=False,threshold=0.18)
 
                 ls=[]
                 for box,conf in zip(faces,confidences):
                     crop_face = var_frame[box[1]:box[3], box[0]:box[2]]
 
+                    crop_face=cv2.resize(crop_face,(face_crop,face_crop))
                     crop_face=cv2.cvtColor(crop_face, cv2.COLOR_BGR2RGB)
-                    rs_face=cv2.resize(crop_face,(face_crop,face_crop), interpolation = cv2.INTER_AREA)
-                    # rs_face=rs_face/255.
-
-                    p=model.predict(rs_face.reshape(1,face_crop,face_crop,3))
+                    crop_face=crop_face/255
+                    # with tf.device("/GPU:0"):
+                    p=model.predict(crop_face.reshape(1,face_crop,face_crop,3))
                     p = np.argmax(p, axis=1)
                     #p=knn.predict(p)
                     p=classes[int(p[0])]
@@ -88,8 +88,8 @@ def face_det():
                         color = (0, 0, 255)
 
                     ls.append([box,p,color])
-        except:
-            # print("except")
+        except Exception as e:
+            print("except")
             ls=[]
 
         faces_list=ls[:]
@@ -100,7 +100,7 @@ def face_det():
 #OBJECT Detection Thread 
 def obj_det():
     
-    global obj_list
+    global obj_list,frame
     
     while not stop:
         
@@ -205,7 +205,7 @@ def detection(test=False):
     while webcam.isOpened() and not stop:    
         # read frame from webcam 
         status, raw_frame = webcam.read()
-        frame=cv2.resize(raw_frame,d)
+        frame=cv2.resize(raw_frame,d,interpolation = cv2.INTER_AREA)
         
         if not status:
             break
@@ -225,16 +225,16 @@ def detection(test=False):
             color=item[2]
             
 
-            start_point = (box[0],box[1])
-            end_point = (box[2], box[3])
+            start_point = (box[0]-3,box[1]-3)
+            end_point = (box[2]+3, box[3]+3)
             thickness = 2
             cv2.rectangle(frame, start_point, end_point, color, thickness)
 
             font                   = cv2.FONT_HERSHEY_SIMPLEX
-            bottomLeftCornerOfText = (box[0],box[1]-5)
-            if p=="no mask":
+            bottomLeftCornerOfText = (box[0]-3,box[1]-10)
+            if p=="alert":
                 temp+=1
-                bottomLeftCornerOfText = (box[0],box[3]+5)
+                bottomLeftCornerOfText = (box[0]-3,box[3]+25)
             fontScale              = 1
             fontColor              = (255,255,255)
             lineType               = 2

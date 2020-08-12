@@ -36,7 +36,7 @@ def info():
 def analytics():
 	mask,no_mask=0,0
 	mask_img=""
-	with open("face.dat","r") as file:
+	with open("logs/face.dat","r") as file:
 		for line in file.readlines():
 			dat=line.split()
 			if len(dat)>1:
@@ -66,7 +66,7 @@ def analytics():
 	violate=[]
 	ana_img=""
 	overTime=""
-	with open("person.dat","r") as file:
+	with open("logs/person.dat","r") as file:
 		for line in file.readlines():
 			dat=line.split()
 			if len(dat)>1:
